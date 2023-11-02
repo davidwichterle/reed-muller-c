@@ -24,6 +24,13 @@ typedef struct vector {
 vector *v_new(size_t size);
 
 /**
+ * Converts C string to vector
+ * @param str const char array of 0's and 1's
+ * @return pointer to the vector converted from C string
+*/
+vector *v_str(const char *str);
+
+/**
  * Delete vector
  * @param v vector pointer
 */

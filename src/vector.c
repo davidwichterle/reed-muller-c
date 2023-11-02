@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "vector.h"
 
@@ -11,7 +12,23 @@ vector *v_new(size_t size) {
   return v;
 }
 
-void v_delete(vector *v) {
+vector *v_str(const char *str) {
+  size_t n = strlen(str);
+  if (!n)
+    return NULL;
+  vector *v = v_new(n);
+  for (size_t i = 0; i < n; ++i) {
+    if (str[i] != '0' && str[i] != '1') {
+      v_delete(v);
+      return NULL;
+    }
+    v_push_back(v, str[i] -'0');
+  }
+  return v;
+}
+
+void v_delete(vector *v)
+{
   free(v->data);
   free(v);
 }

@@ -49,14 +49,14 @@ void RM_delete(RM *rm);
  * @param rm RM(r, m) code pointer
  * @return pointer to the created generator matrix
 */
-matrix *RM_gen_matrix(RM *rm);
+matrix *RM_generator_matrix(RM *rm);
 
 /**
  * Computes strength of RM(r, m) code i.e. number of errors we can correct
  * @param rm RM(r, m) code pointer
  * @return 2^(m - r - 1) - 1
 */
-size_t RM_str(RM *rm);
+size_t RM_strength(RM *rm);
 
 /**
  * Splits generator matrix into r + 1 parts, where each part contains vectors of same order
@@ -79,5 +79,13 @@ matrix *RM_missing(RM *rm);
  * @return array of matrix pointers, used in majority logic voting in decoding process 
 */
 matrix **RM_ml_table(RM *rm);
+
+/**
+ * Encode message through RM(r, m) code
+ * @param rm RM(r, m) code pointer
+ * @param str const char array, message to be encoded
+ * @return vector pointer, encoded message 
+*/
+vector *RM_encode(RM *rm, const char *str);
 
 #endif

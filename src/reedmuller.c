@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "matrix.h"
 #include "reedmuller.h"
@@ -19,7 +20,7 @@ RM *RM_new(size_t r, size_t m) {
   rm->m = m;
   rm->n = (1 << m);
   rm->k = RM_dim(r, m);
-  rm->G = RM_gen_matrix(rm);
+  rm->G = RM_generator_matrix(rm);
   return rm;
 }
 
@@ -28,7 +29,7 @@ void RM_delete(RM *rm) {
   free(rm);
 }
 
-matrix *RM_gen_matrix(RM *rm) {
+matrix *RM_generator_matrix(RM *rm) {
   matrix *base = m_base(rm->m);
   matrix *gen = m_new(rm->k);
   for (size_t i = 0; i <= rm->r; ++i) {
@@ -50,7 +51,7 @@ matrix *RM_gen_matrix(RM *rm) {
   return gen;
 }
 
-size_t RM_str(RM *rm) {
+size_t RM_strength(RM *rm) {
   return ((1 << (rm->m - rm->r - 1)) - 1);
 }
 
@@ -101,58 +102,27 @@ matrix **RM_ml_table(RM *rm) {
     ml[i] = ml_row;
   }
   return ml;
+}        
+
+vector *RM_encode(RM *rm, const char *str) {
+  if (rm->k != strlen(message))
+    return NULL;
+  matrix *G_T = m_transpose(rm->G);
+  vector *message = v_str(str);
+  vector *code_word = v_new(rm->n);
+  for (size_t i = 0; i < rm->n; ++i) 
+    v_push_back(code_word, v_dotproduct(message, G_T->rows[i]));
+  return code_word;
 }
 
 int main() {
   RM *rm = RM_new(2, 3);
   m_print(rm->G);
   printf("\n");
-  matrix **m = RM_ml_table(rm);
-  for (size_t i = 0; i < rm->k; ++i) {
-    m_print(m[i]);
-    printf("\n");
-  }
+  vector *v = v_str("01010101");
+  v_print(v);
   RM_delete(rm);
+  v_delete(v);
   return 0;
 }
-
-// 0000
-// 0001
-// 0010
-// 0011
-// 0100
-// 0101
-// 0110
-// 0111
-// 1000
-// 1001
-// 1010
-// 1011
-// 1100
-// 1101
-// 1110
-// 1111
-
-
-//          0 1 2 3 
-// 0        1 2 3 
-// 1        0 2 3
-// 2        0 1 3 
-// 3        0 1 2 
-// 0 1      2 3      
-// 0 2      1 3 
-// 1 2      0 3 
-// 0 3      1 2 
-// 1 3      0 2 
-// 2 3      0 1 
-
-
-
-
-
-
-
-
-
- 
 
