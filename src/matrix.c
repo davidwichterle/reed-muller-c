@@ -4,7 +4,7 @@
 #include "matrix.h"
 #include "vector.h"
 
-matrix *matrix_new(size_t size) {
+matrix *m_new(size_t size) {
   matrix *m = (matrix *)malloc(sizeof(*m));
   m->rows = (vector **)malloc(size * sizeof(*(m->rows)));
   m->size = 0;
@@ -12,14 +12,14 @@ matrix *matrix_new(size_t size) {
   return m; 
 }
 
-void matrix_delete(matrix *m) {
+void m_delete(matrix *m) {
   for (size_t i = 0; i < m->size; ++i)
-    vector_delete(m->rows[i]);
+    v_delete(m->rows[i]);
   free(m->rows);
   free(m);
 }
 
-unsigned matrix_resize(matrix *m, size_t size) {
+unsigned m_resize(matrix *m, size_t size) {
   if (size > m->capacity) {
     size_t new_size = (m->capacity + 1) * 2;
     vector **new_rows = (vector **)realloc(m->rows, new_size * sizeof(*new_rows));
@@ -35,29 +35,29 @@ unsigned matrix_resize(matrix *m, size_t size) {
   return 1;
 }
 
-unsigned matrix_push_back(matrix *m, vector *val) {
-  if(!matrix_resize(m, m->size + 1)) 
+unsigned m_push_back(matrix *m, vector *val) {
+  if(!m_resize(m, m->size + 1)) 
     return 0;
   m->rows[m->size - 1] = val;
   return 1;
 }
 
-void matrix_print(matrix *m) {
+void m_print(matrix *m) {
   for (size_t i = 0; i < m->size; ++i) 
-    vector_print(m->rows[i]);
+    v_print(m->rows[i]);
 }
 
-matrix *base_matrix(size_t size) {
-  matrix *m = matrix_new(size);
+matrix *m_base(size_t size) {
+  matrix *m = m_new(size);
   for (size_t i = 0; i < size; ++i)
-    matrix_push_back(m, base_vector(size, i));
+    m_push_back(m, v_base(size, i));
   return m;
 }
 
-matrix *matrix_transpose(matrix *m) {
-  matrix *res = matrix_new(m->rows[0]->size);
+matrix *m_transpose(matrix *m) {
+  matrix *res = m_new(m->rows[0]->size);
   for (size_t i = 0; i < res->capacity; ++i)
-    res->rows[i] = vector_new(m->size);
+    res->rows[i] = v_new(m->size);
   for (size_t i = 0; i < res->capacity; ++i) {
     for (size_t j = 0; j < res->rows[0]->capacity; ++j) {
       res->rows[i]->data[j] =  m->rows[j]->data[i];
