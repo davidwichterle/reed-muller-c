@@ -12,7 +12,9 @@
  * @param m code length is 2^m
  * @param n code length i.e. 2^m
  * @param k message length i.e. dim(RM(r, m))
- * @param G pointer to the generator matrix
+ * @param G generator matrix pointer
+ * @param G_T transposed generator matrix pointer
+ * @param ml array of matrix pointers, majority logic table
 */
 typedef struct RM {
   size_t r;
@@ -20,6 +22,8 @@ typedef struct RM {
   size_t n;
   size_t k;
   matrix *G;
+  matrix *G_T;
+  matrix **ml;
 } RM;
 
 /**
@@ -49,7 +53,7 @@ void RM_delete(RM *rm);
  * @param rm RM(r, m) code pointer
  * @return pointer to the created generator matrix
 */
-matrix *RM_generator_matrix(RM *rm);
+matrix *RM_gen(RM *rm);
 
 /**
  * Computes strength of RM(r, m) code i.e. number of errors we can correct
@@ -78,7 +82,14 @@ matrix *RM_missing(RM *rm);
  * @param rm RM(r, m) code pointer
  * @return array of matrix pointers, used in majority logic voting in decoding process 
 */
-matrix **RM_ml_table(RM *rm);
+matrix **RM_ml(RM *rm);
+
+/**
+ * Display majority logic table 
+ * @param rm RM(r, m) code pointer
+*/
+void RM_ml_print(RM *rm);
+
 
 /**
  * Encode message through RM(r, m) code
@@ -87,5 +98,7 @@ matrix **RM_ml_table(RM *rm);
  * @return vector pointer, encoded message 
 */
 vector *RM_encode(RM *rm, const char *str);
+
+vector *RM_decode(RM *rm, const char *str);
 
 #endif
