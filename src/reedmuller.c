@@ -45,7 +45,7 @@ matrix *RM_gen(RM *rm) {
         for (size_t k = 0; k < rm->m; ++k) {
           if (j & (1 << k)) {
             vector *tmp = v;
-            v = vector_mult(tmp, base->rows[k]);
+            v = vector_mult(tmp, *matrix_at(base, k));
             vector_delete(tmp);
           }
         }
@@ -90,15 +90,15 @@ matrix **RM_ml(RM *rm) {
   matrix **ml = (matrix **)malloc(rm->k * sizeof(*ml));
   matrix *m = RM_missing(rm);
   for (size_t i = 0; i < rm->k; ++i) {
-    matrix *ml_row = matrix_new(1 << m->rows[i]->size);
+    matrix *ml_row = matrix_new(1 << (*matrix_at(m, i))->size);
     matrix_push_back(ml_row, vector_ones(rm->n));
-    for (size_t j = 0; j < m->rows[i]->size; ++j) {
+    for (size_t j = 0; j < (*matrix_at(m, i))->size; ++j) {
       vector *v = vector_base(rm->m, *vector_at(m->rows[i], j));
       vector *not_v = vector_neg(v);
-      matrix *ml_row_new = matrix_new(1 << m->rows[i]->size);
+      matrix *ml_row_new = matrix_new(1 << (*matrix_at(m, i))->size);
       for (size_t k = 0; k < ml_row->size; ++k) {
-        matrix_push_back(ml_row_new, vector_mult(v, ml_row->rows[k]));
-        matrix_push_back(ml_row_new, vector_mult(not_v, ml_row->rows[k]));
+        matrix_push_back(ml_row_new, vector_mult(v, *matrix_at(ml_row, k)));
+        matrix_push_back(ml_row_new, vector_mult(not_v, *matrix_at(ml_row, k)));
       }
       matrix *tmp = ml_row;
       ml_row = ml_row_new;
@@ -125,7 +125,7 @@ vector *RM_encode(RM *rm, const char *str) {
   vector *message = vector_str(str);
   vector *code_word = vector_new(rm->n);
   for (size_t i = 0; i < rm->n; ++i) 
-    vector_push_back(code_word, vector_dotproduct(message, rm->G_T->rows[i]) % 2);
+    vector_push_back(code_word, vector_dotproduct(message, *matrix_at(rm->G_T, i)) % 2);
   vector_delete(message);
   return code_word;
 }
@@ -143,7 +143,7 @@ vector *RM_decode(RM *rm, const char *str) {
       size_t zeros = 0;
       size_t ones = 0;
       for (size_t k = 0; k < rm->ml[j]->size; ++k) {
-        if (vector_dotproduct(code_word, rm->ml[j]->rows[k]) % 2 == 0)
+        if (!(vector_dotproduct(code_word, *matrix_at(rm->ml[j], k)) % 2))
           zeros++;
         else
           ones++;
@@ -162,8 +162,8 @@ int main() {
   RM *rm = RM_new(2, 3);
   matrix_print(rm->G, "\n");
   printf("\n");
+  matrix_print(rm->G_T, "\n");
   // RM_ml_print(rm);
-  vector_delete(v);
   RM_delete(rm);
   return 0;
 }

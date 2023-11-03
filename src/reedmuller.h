@@ -85,7 +85,7 @@ matrix *RM_missing(RM *rm);
 matrix **RM_ml(RM *rm);
 
 /**
- * Display majority logic table 
+ * Displays majority logic table 
  * @param rm RM(r, m) code pointer
 */
 void RM_ml_print(RM *rm);

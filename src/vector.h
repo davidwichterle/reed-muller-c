@@ -61,7 +61,16 @@ unsigned vector_push_back(vector *v, unsigned val);
 unsigned *vector_at(vector *v, size_t pos);
 
 /**
- * Display vector
+ * Returns slice of the vector
+ * @param v vector pointer
+ * @param lo lower position
+ * @param hi higher position
+ * @return NULL if any position is invalid, else v[lo:hi] with higer position included
+*/
+vector *vector_slice(vector *v, size_t lo, size_t hi);
+
+/**
+ * Displays vector
  * @param v vector pointer
 */
 void vector_print(vector *v);

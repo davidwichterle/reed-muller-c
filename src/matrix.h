@@ -48,7 +48,24 @@ unsigned matrix_resize(matrix *m, size_t size);
 unsigned matrix_push_back(matrix *m, vector *val);
 
 /**
- * Display matrix
+ * Returns address of row in matrix
+ * @param m matrix pointer
+ * @param pos position
+ * @return NULL if position is invalid, else address of row at the position 
+*/
+vector **matrix_at(matrix *m, size_t pos);
+
+/**
+ * Returns slice of the matrix
+ * @param m matrix pointer
+ * @param lo lower position
+ * @param hi higher position
+ * @return NULL if any position is invalid, else m[lo:hi] with higer position included
+*/
+matrix *matrix_slice(matrix *m, size_t lo, size_t hi);
+
+/**
+ * Displays matrix
  * @param m matrix pointer
  * @param del const char array, row delimeter
 */

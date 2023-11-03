@@ -27,8 +27,7 @@ vector *vector_str(const char *str) {
   return v;
 }
 
-void vector_delete(vector *v)
-{
+void vector_delete(vector *v) {
   free(v->data);
   free(v);
 }
@@ -57,9 +56,18 @@ unsigned vector_push_back(vector *v, unsigned val) {
 }
 
 unsigned *vector_at(vector *v, size_t pos) {
-  if (pos < 0 || pos > (v->size - 1)) 
+  if (!v || pos < 0 || pos > v->size - 1) 
     return NULL;
   return (v->data + pos); 
+}
+
+vector *vector_slice(vector *v, size_t lo, size_t hi) {
+  if (!v || lo < 0 || hi > v->size - 1 || lo > hi) 
+    return NULL;
+  vector *res = vector_new(hi - lo + 1);
+  for (size_t i = lo; lo <= hi; ++i)
+    vector_push_back(res, *vector_at(v, i));
+  return res; 
 }
 
 void vector_print(vector *v) {
