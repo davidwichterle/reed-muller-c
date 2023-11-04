@@ -85,6 +85,14 @@ matrix *RM_missing(RM *rm);
 matrix **RM_ml(RM *rm);
 
 /**
+ * Computes majority vote according to majority logic table 
+ * @param rm RM(r, m) code pointer
+ * @return array of matrix pointers, used in majority logic voting in decoding process 
+*/
+int RM_ml_vote(RM *rm, vector *code_word, size_t pos);
+
+
+/**
  * Displays majority logic table 
  * @param rm RM(r, m) code pointer
 */
@@ -92,13 +100,19 @@ void RM_ml_print(RM *rm);
 
 
 /**
- * Encode message through RM(r, m) code
+ * Encode message with RM(r, m) code
  * @param rm RM(r, m) code pointer
  * @param str const char array, message to be encoded
  * @return vector pointer, encoded message 
 */
 vector *RM_encode(RM *rm, const char *str);
 
+/**
+ * Decode code word with RM(r, m) code
+ * @param rm RM(r, m) code pointer
+ * @param str const char array, message to be decoded
+ * @return vector pointer, decoded message 
+*/
 vector *RM_decode(RM *rm, const char *str);
 
 #endif

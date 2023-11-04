@@ -27,12 +27,19 @@ vector *vector_str(const char *str) {
   return v;
 }
 
+vector *vector_vec(vector *dst, vector *src) {
+  vector *tmp = dst;
+  dst = src;
+  vector_delete(tmp);
+  return dst;
+}
+
 void vector_delete(vector *v) {
   free(v->data);
   free(v);
 }
 
-unsigned vector_resize(vector *v, size_t size) {
+int vector_resize(vector *v, size_t size) {
   if (size > v->capacity) {
     size_t new_size = (v->capacity + 1) * 2;
     unsigned *new_data = (unsigned *)realloc(v->data, new_size * sizeof(*new_data));
@@ -48,24 +55,34 @@ unsigned vector_resize(vector *v, size_t size) {
   return 1;
 }
 
-unsigned vector_push_back(vector *v, unsigned val) {
+int vector_push_back(vector *v, unsigned val) {
   if(!vector_resize(v, v->size + 1)) 
     return 0;
   *vector_at(v, v->size - 1) = val;
   return 1;
 }
 
-unsigned *vector_at(vector *v, size_t pos) {
-  if (!v || pos < 0 || pos > v->size - 1) 
+int vector_insert(vector *v, size_t pos, unsigned val) {
+  unsigned *i = vector_at(v, pos);
+  if (!i)
+    return 0;
+  *i = val;
+  v->size++;
+  return 1;
+}
+
+unsigned *vector_at(vector *v, size_t pos)
+{
+  if (!v || pos < 0 || pos > v->capacity - 1)
     return NULL;
-  return (v->data + pos); 
+  return (v->data + pos);
 }
 
 vector *vector_slice(vector *v, size_t lo, size_t hi) {
-  if (!v || lo < 0 || hi > v->size - 1 || lo > hi) 
+  if (!v || lo < 0 || hi > v->capacity - 1 || lo > hi) 
     return NULL;
   vector *res = vector_new(hi - lo + 1);
-  for (size_t i = lo; lo <= hi; ++i)
+  for (size_t i = lo; i <= hi; ++i)
     vector_push_back(res, *vector_at(v, i));
   return res; 
 }

@@ -31,6 +31,14 @@ vector *vector_new(size_t size);
 vector *vector_str(const char *str);
 
 /**
+ * Initialises vector from vector
+ * @param dst vector pointer to be initialised
+ * @param src vector template pointer
+ * @return vector pointer initialised from the vector pointer template
+*/
+vector *vector_vec(vector *dst, vector *src);
+
+/**
  * Delete vector
  * @param v vector pointer
 */
@@ -42,15 +50,24 @@ void vector_delete(vector *v);
  * @param size new capacity of the vector
  * @return 0 on error, 1 on success
 */
-unsigned vector_resize(vector *v, size_t size);
+int vector_resize(vector *v, size_t size);
 
 /**
- * Add element to the end of vector
+ * Insert element to the end of vector
  * @param v vector pointer
  * @param val element to be inserted
  * @return 0 on error, 1 on success
 */
-unsigned vector_push_back(vector *v, unsigned val);
+int vector_push_back(vector *v, unsigned val);
+
+/**
+ * Insert element to position in vector
+ * @param v vector pointer
+ * @param pos position 
+ * @param val element to be inserted
+ * @return 0 on error, 1 on success
+*/
+int vector_insert(vector *v, size_t pos, unsigned val);
 
 /**
  * Returns address of element in vector

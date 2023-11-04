@@ -43,11 +43,8 @@ matrix *RM_gen(RM *rm) {
       if (i == one_bits(j)) {
         vector *v = vector_ones(rm->n);
         for (size_t k = 0; k < rm->m; ++k) {
-          if (j & (1 << k)) {
-            vector *tmp = v;
-            v = vector_mult(tmp, *matrix_at(base, k));
-            vector_delete(tmp);
-          }
+          if (j & (1 << k))
+            v = vector_vec(v, vector_mult(v, *matrix_at(base, k)));
         }
         matrix_push_back(gen, v);
       }
@@ -100,9 +97,7 @@ matrix **RM_ml(RM *rm) {
         matrix_push_back(ml_row_new, vector_mult(v, *matrix_at(ml_row, k)));
         matrix_push_back(ml_row_new, vector_mult(not_v, *matrix_at(ml_row, k)));
       }
-      matrix *tmp = ml_row;
-      ml_row = ml_row_new;
-      matrix_delete(tmp);
+      ml_row = matrix_mat(ml_row, ml_row_new);
       vector_delete(v);
       vector_delete(not_v);
     }
@@ -110,6 +105,20 @@ matrix **RM_ml(RM *rm) {
   }
   matrix_delete(m);
   return ml;
+}
+
+int RM_ml_vote(RM *rm, vector *code_word, size_t pos) {
+  size_t zeros = 0;
+  size_t ones = 0;
+  for (size_t i = 0; i < rm->ml[pos]->size; ++i) {
+    if (!(vector_dotproduct(code_word, *matrix_at(rm->ml[pos], i)) % 2))
+      zeros++;
+    else
+      ones++;
+  }
+  if (zeros == ones)
+    return -1;
+  return zeros > ones ? 0 : 1;
 }
 
 void RM_ml_print(RM *rm) {
@@ -136,34 +145,39 @@ vector *RM_decode(RM *rm, const char *str) {
   vector *code_word = vector_str(str);
   vector *message = vector_new(rm->k);
   vector *indices = RM_split(rm);
-  for (size_t i = rm->r; i >= 0; ++i) {
+  for (int i = rm->r; i >= 0; --i) {
     size_t lo = i == 0 ? 0 : *vector_at(indices, i - 1) + 1;
     size_t hi = *vector_at(indices, i);
     for (size_t j = lo; j <= hi; ++j) {
-      size_t zeros = 0;
-      size_t ones = 0;
-      for (size_t k = 0; k < rm->ml[j]->size; ++k) {
-        if (!(vector_dotproduct(code_word, *matrix_at(rm->ml[j], k)) % 2))
-          zeros++;
-        else
-          ones++;
-      }
-      if (zeros == ones)
+      int vote = RM_ml_vote(rm, code_word, j);
+      if (vote == -1)
         return NULL;
-      *vector_at(message, j) = zeros > ones ? 0 : 1;  
+      vector_insert(message, j, vote);
     }
-
+    vector *res = vector_new(rm->n);
+    vector *message_slice = vector_slice(message, lo, hi);
+    for (size_t k = 0; k < rm->G_T->size; ++k) {
+      vector *col = vector_slice(*matrix_at(rm->G_T, k), lo, hi);
+      vector_push_back(res, vector_dotproduct(message_slice, col) % 2);
+      vector_delete(col);
+    }
+    code_word = vector_vec(code_word, vector_mod(vector_add(code_word, res), 2));
+    vector_delete(message_slice);
+    vector_delete(res);
   }
-
-  return NULL;
+  vector_delete(code_word);
+  vector_delete(indices);
+  return message;
 }
 
 int main() {
   RM *rm = RM_new(2, 3);
   matrix_print(rm->G, "\n");
   printf("\n");
-  matrix_print(rm->G_T, "\n");
-  // RM_ml_print(rm);
+  vector *v = RM_decode(rm, "01010101");
+  puts("");
+  vector_print(v);
+  vector_delete(v);
   RM_delete(rm);
   return 0;
 }

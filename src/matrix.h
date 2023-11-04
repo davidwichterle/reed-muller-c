@@ -26,6 +26,14 @@ typedef struct matrix {
 matrix *matrix_new(size_t size);
 
 /**
+ * Initialises matrix from matrix
+ * @param dst matrix pointer to be initialised
+ * @param src matrix template pointer
+ * @return matrix pointer initialised from the matrix pointer template
+*/
+matrix *matrix_mat(matrix *dst, matrix *src);
+
+/**
  * Delete matrix
  * @param m matrix pointer
 */
@@ -37,15 +45,15 @@ void matrix_delete(matrix *m);
  * @param size new capacity of the matrix
  * @return 0 on error, 1 on success
 */
-unsigned matrix_resize(matrix *m, size_t size);
+int matrix_resize(matrix *m, size_t size);
 
 /**
- * Add row to the end of matrix
+ * Insert row to the end of matrix
  * @param m matrix pointer
  * @param val vector pointer to be inserted
  * @return 0 on error, 1 on success
 */
-unsigned matrix_push_back(matrix *m, vector *val);
+int matrix_push_back(matrix *m, vector *val);
 
 /**
  * Returns address of row in matrix
@@ -54,15 +62,6 @@ unsigned matrix_push_back(matrix *m, vector *val);
  * @return NULL if position is invalid, else address of row at the position 
 */
 vector **matrix_at(matrix *m, size_t pos);
-
-/**
- * Returns slice of the matrix
- * @param m matrix pointer
- * @param lo lower position
- * @param hi higher position
- * @return NULL if any position is invalid, else m[lo:hi] with higer position included
-*/
-matrix *matrix_slice(matrix *m, size_t lo, size_t hi);
 
 /**
  * Displays matrix
