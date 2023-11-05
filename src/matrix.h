@@ -8,7 +8,7 @@
 
 /**
  * Structure emulating C++ std::vector<std::vector<unsigned>>
- * @param rows array of row pointers
+ * @param rows array of vector pointers
  * @param size current size
  * @param capacity current capacity
 */
