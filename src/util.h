@@ -12,7 +12,7 @@
 size_t one_bits(size_t val);
 
 /**
- * Compute binomial coefficient
+ * Computes binomial coefficient
  * @param n 
  * @param k 
  * @return n! / ((n - k)! * k!)

@@ -132,40 +132,40 @@ vector *RM_encode(RM *rm, const char *str) {
   if (rm->k != strlen(str))
     return NULL;
   vector *message = vector_str(str);
-  vector *code_word = vector_new(rm->n);
+  vector *codeword = vector_new(rm->n);
   for (size_t i = 0; i < rm->n; ++i) 
-    vector_push_back(code_word, vector_dotproduct(message, *matrix_at(rm->G_T, i)) % 2);
+    vector_push_back(codeword, vector_dotproduct(message, *matrix_at(rm->G_T, i)) % 2);
   vector_delete(message);
-  return code_word;
+  return codeword;
 }
 
 vector *RM_decode(RM *rm, const char *str) {
   if (rm->n != strlen(str))
     return NULL;
-  vector *code_word = vector_str(str);
+  vector *codeword = vector_str(str);
   vector *message = vector_new(rm->k);
   vector *indices = RM_split(rm);
   for (int i = rm->r; i >= 0; --i) {
     size_t lo = i == 0 ? 0 : *vector_at(indices, i - 1) + 1;
     size_t hi = *vector_at(indices, i);
     for (size_t j = lo; j <= hi; ++j) {
-      int vote = RM_ml_vote(rm, code_word, j);
+      int vote = RM_ml_vote(rm, codeword, j);
       if (vote == -1)
         return NULL;
       vector_insert(message, j, vote);
     }
     vector *res = vector_new(rm->n);
-    vector *message_slice = vector_slice(message, lo, hi);
+    vector *m = vector_slice(message, lo, hi);
     for (size_t k = 0; k < rm->G_T->size; ++k) {
       vector *col = vector_slice(*matrix_at(rm->G_T, k), lo, hi);
-      vector_push_back(res, vector_dotproduct(message_slice, col) % 2);
+      vector_push_back(res, vector_dotproduct(m, col) % 2);
       vector_delete(col);
     }
-    code_word = vector_vec(code_word, vector_mod(vector_add(code_word, res), 2));
-    vector_delete(message_slice);
+    codeword = vector_vec(codeword, vector_mod(vector_add(codeword, res), 2));
+    vector_delete(m);
     vector_delete(res);
   }
-  vector_delete(code_word);
+  vector_delete(codeword);
   vector_delete(indices);
   return message;
 }
@@ -173,10 +173,8 @@ vector *RM_decode(RM *rm, const char *str) {
 int main() {
   RM *rm = RM_new(2, 3);
   matrix_print(rm->G, "\n");
-  printf("\n");
-  vector *v = RM_decode(rm, "01010101");
-  puts("");
-  vector_print(v);
+  vector *v = RM_decode(rm, "00000110");
+  vector_print(v, "\n");
   vector_delete(v);
   RM_delete(rm);
   return 0;

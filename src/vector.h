@@ -34,40 +34,15 @@ vector *vector_str(const char *str);
  * Initialises vector from vector
  * @param dst vector pointer to be initialised
  * @param src vector template pointer
- * @return vector pointer initialised from the vector pointer template
+ * @return vector pointer initialised from the vector template pointer
 */
 vector *vector_vec(vector *dst, vector *src);
 
 /**
- * Delete vector
+ * Deletes vector
  * @param v vector pointer
 */
 void vector_delete(vector *v);
-
-/**
- * Resize vector - reallocate memory if necessary
- * @param v vector pointer
- * @param size new capacity of the vector
- * @return 0 on error, 1 on success
-*/
-int vector_resize(vector *v, size_t size);
-
-/**
- * Insert element to the end of vector
- * @param v vector pointer
- * @param val element to be inserted
- * @return 0 on error, 1 on success
-*/
-int vector_push_back(vector *v, unsigned val);
-
-/**
- * Insert element to position in vector
- * @param v vector pointer
- * @param pos position 
- * @param val element to be inserted
- * @return 0 on error, 1 on success
-*/
-int vector_insert(vector *v, size_t pos, unsigned val);
 
 /**
  * Returns address of element in vector
@@ -76,6 +51,31 @@ int vector_insert(vector *v, size_t pos, unsigned val);
  * @return NULL if position is invalid, else address of element at the position 
 */
 unsigned *vector_at(vector *v, size_t pos);
+
+/**
+ * Resizes vector - reallocates memory if necessary
+ * @param v vector pointer
+ * @param size new capacity of the vector
+ * @return 0 on error, 1 on success
+*/
+int vector_resize(vector *v, size_t size);
+
+/**
+ * Inserts element to the end of vector
+ * @param v vector pointer
+ * @param val element to be inserted
+ * @return 0 on error, 1 on success
+*/
+int vector_push_back(vector *v, unsigned val);
+
+/**
+ * Inserts element to position in vector
+ * @param v vector pointer
+ * @param pos position 
+ * @param val element to be inserted
+ * @return 0 on error, 1 on success
+*/
+int vector_insert(vector *v, size_t pos, unsigned val);
 
 /**
  * Returns slice of the vector
@@ -89,8 +89,9 @@ vector *vector_slice(vector *v, size_t lo, size_t hi);
 /**
  * Displays vector
  * @param v vector pointer
+ * @param del const char array, delimeter
 */
-void vector_print(vector *v);
+void vector_print(vector *v, const char *del);
 
 /**
  * Vector addition
@@ -116,7 +117,7 @@ vector *vector_mult(vector *v1, vector *v2);
 vector *vector_neg(vector *v);
 
 /**
- * Reduce vector over provided modulo
+ * Reduces vector over provided modulo in place
  * @param v vector pointer
  * @param p modulo
  * @return pointer to vector reduced by p
@@ -131,7 +132,7 @@ vector *vector_mod(vector *v, size_t p);
 size_t vector_sum(vector *v);
 
 /**
- * Computes dot product of 2 vectors
+ * Computes dot product of two vectors
  * @param v1 first vector
  * @param v2 second vector
  * @return dot product i.e. (v1[1] * v2[1] + ... + v1[n] * v2[n]) 

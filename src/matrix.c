@@ -28,18 +28,23 @@ void matrix_delete(matrix *m) {
 
 int matrix_resize(matrix *m, size_t size) {
   if (size > m->capacity) {
-    size_t new_size = (m->capacity + 1) * 2;
-    vector **new_rows = (vector **)realloc(m->rows, new_size * sizeof(*new_rows));
-    if (new_rows) {
-      m->capacity = new_size;
-      m->rows = new_rows;
-    } else {
+    size_t new_capacity = (m->capacity + 1) * 2;
+    vector **new_rows = (vector **)realloc(m->rows, new_capacity * sizeof(*new_rows));
+    if (!new_rows) {
       printf("error: not enough memory\n");
       return 0;
     }
+    m->capacity = new_capacity;
+    m->rows = new_rows;
   }
   m->size = size;
   return 1;
+}
+
+vector **matrix_at(matrix *m, size_t pos) {
+  if (!m || pos < 0 || pos > m->capacity - 1) 
+    return NULL;
+  return m->rows + pos; 
 }
 
 int matrix_push_back(matrix *m, vector *val) {
@@ -49,17 +54,9 @@ int matrix_push_back(matrix *m, vector *val) {
   return 1;
 }
 
-vector **matrix_at(matrix *m, size_t pos) {
-  if (!m || pos < 0 || pos > m->capacity - 1) 
-    return NULL;
-  return (m->rows + pos); 
-}
-
 void matrix_print(matrix *m, const char *del) {
-  for (size_t i = 0; i < m->size; ++i) {
-    vector_print(*matrix_at(m, i));
-    printf("%s", del);
-  }
+  for (size_t i = 0; i < m->size; ++i)
+    vector_print(*matrix_at(m, i), del);
 }
 
 matrix *matrix_base(size_t size) {

@@ -34,13 +34,21 @@ matrix *matrix_new(size_t size);
 matrix *matrix_mat(matrix *dst, matrix *src);
 
 /**
- * Delete matrix
+ * Deletes matrix
  * @param m matrix pointer
 */
 void matrix_delete(matrix *m);
 
 /**
- * Resize matrix - reallocate memory if necessary
+ * Returns address of row in matrix
+ * @param m matrix pointer
+ * @param pos position
+ * @return NULL if position is invalid, else address of row at the position 
+*/
+vector **matrix_at(matrix *m, size_t pos);
+
+/**
+ * Resizes matrix - reallocates memory if necessary
  * @param m matrix pointer
  * @param size new capacity of the matrix
  * @return 0 on error, 1 on success
@@ -54,14 +62,6 @@ int matrix_resize(matrix *m, size_t size);
  * @return 0 on error, 1 on success
 */
 int matrix_push_back(matrix *m, vector *val);
-
-/**
- * Returns address of row in matrix
- * @param m matrix pointer
- * @param pos position
- * @return NULL if position is invalid, else address of row at the position 
-*/
-vector **matrix_at(matrix *m, size_t pos);
 
 /**
  * Displays matrix

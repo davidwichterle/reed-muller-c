@@ -14,8 +14,6 @@ vector *vector_new(size_t size) {
 
 vector *vector_str(const char *str) {
   size_t n = strlen(str);
-  if (!n)
-    return NULL;
   vector *v = vector_new(n);
   for (size_t i = 0; i < n; ++i) {
     if (str[i] != '0' && str[i] != '1') {
@@ -39,17 +37,24 @@ void vector_delete(vector *v) {
   free(v);
 }
 
+unsigned *vector_at(vector *v, size_t pos) {
+  if (!v || pos < 0 || pos > v->capacity - 1) {
+    printf("error: index out of bounds\n");
+    return NULL;
+  }
+  return v->data + pos;
+}
+
 int vector_resize(vector *v, size_t size) {
   if (size > v->capacity) {
-    size_t new_size = (v->capacity + 1) * 2;
-    unsigned *new_data = (unsigned *)realloc(v->data, new_size * sizeof(*new_data));
-    if (new_data) {
-      v->capacity = new_size;
-      v->data = new_data;
-    } else {
+    size_t new_capacity = (v->capacity + 1) * 2;
+    unsigned *new_data = (unsigned *)realloc(v->data, new_capacity * sizeof(*new_data));
+    if (!new_data) {
       printf("error: not enough memory\n");
       return 0;
     }
+    v->capacity = new_capacity;
+    v->data = new_data;
   }
   v->size = size;
   return 1;
@@ -71,13 +76,6 @@ int vector_insert(vector *v, size_t pos, unsigned val) {
   return 1;
 }
 
-unsigned *vector_at(vector *v, size_t pos)
-{
-  if (!v || pos < 0 || pos > v->capacity - 1)
-    return NULL;
-  return (v->data + pos);
-}
-
 vector *vector_slice(vector *v, size_t lo, size_t hi) {
   if (!v || lo < 0 || hi > v->capacity - 1 || lo > hi) 
     return NULL;
@@ -87,11 +85,10 @@ vector *vector_slice(vector *v, size_t lo, size_t hi) {
   return res; 
 }
 
-void vector_print(vector *v) {
-  printf("[ ");
+void vector_print(vector *v, const char *del) {
   for (size_t i = 0; i < v->size; ++i)
     printf("%u ", *vector_at(v, i));
-  printf("]");
+  printf("%s", del);
 }
 
 vector *vector_add(vector *v1, vector *v2) {

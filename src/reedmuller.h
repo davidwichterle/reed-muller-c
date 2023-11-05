@@ -43,7 +43,7 @@ size_t RM_dim(size_t r, size_t m);
 RM *RM_new(size_t r, size_t m);
 
 /**
- * Delete RM(r, m) code
+ * Deletes RM(r, m) code
  * @param rm RM(r, m) code pointer
 */
 void RM_delete(RM *rm);
@@ -63,7 +63,7 @@ matrix *RM_gen(RM *rm);
 size_t RM_strength(RM *rm);
 
 /**
- * Splits generator matrix into r + 1 parts, where each part contains vectors of same order
+ * Splits generator matrix into r + 1 parts, where each part contains rows of the same order
  * @param rm RM(r, m) code pointer
  * @return vector pointer, where each value is index of last row to be associated with r-order rows
 */
@@ -72,7 +72,7 @@ vector *RM_split(RM *rm);
 /**
  * For each row of generator matrix, find base vectors not represented in the row
  * @param rm RM(r, m) code pointer
- * @return matrix pointer, where each row is vector of indices of base vectors not represented in row of generator matrix
+ * @return matrix pointer, where each row is vector of indices of base vectors not represented in the row of generator matrix
 */
 matrix *RM_missing(RM *rm);
 
@@ -87,10 +87,9 @@ matrix **RM_ml(RM *rm);
 /**
  * Computes majority vote according to majority logic table 
  * @param rm RM(r, m) code pointer
- * @return array of matrix pointers, used in majority logic voting in decoding process 
+ * @return -1 in case of tie, else 0 or 1 according to majority logic table 
 */
 int RM_ml_vote(RM *rm, vector *code_word, size_t pos);
-
 
 /**
  * Displays majority logic table 
@@ -98,9 +97,8 @@ int RM_ml_vote(RM *rm, vector *code_word, size_t pos);
 */
 void RM_ml_print(RM *rm);
 
-
 /**
- * Encode message with RM(r, m) code
+ * Encodes message with RM(r, m) code
  * @param rm RM(r, m) code pointer
  * @param str const char array, message to be encoded
  * @return vector pointer, encoded message 
@@ -108,7 +106,7 @@ void RM_ml_print(RM *rm);
 vector *RM_encode(RM *rm, const char *str);
 
 /**
- * Decode code word with RM(r, m) code
+ * Decodes code word with RM(r, m) code
  * @param rm RM(r, m) code pointer
  * @param str const char array, message to be decoded
  * @return vector pointer, decoded message 
