@@ -6,16 +6,19 @@ HEADERS = $(wildcard $(SOURCE_DIR)/*.h)
 OBJS = $(SOURCES: $(SOURCE_DIR)/%.c = $(SOURCE_DIR)/%.o)
 EXEC = a.out
 
-all: compile
+all: doc compile
 
 compile: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(EXEC) $(OBJS)
 
 clean:
-	rm -rf $(SOURCE_DIR)/.o $(EXEC) 2>/dev/null
+	rm -rf $(SOURCE_DIR)/.o $(EXEC) doc 2>/dev/null
 
 run:
 	./$(EXEC)
+
+doc: Doxyfile README.md $(HEADERS)
+	doxygen Doxyfile
 
 reedmuller.o: $(SOURCE_DIR)/reedmuller.h $(SOURCE_DIR)/reedmuller.c $(SOURCE_DIR)/vector.h $(SOURCE_DIR)/matrix.h $(SOURCE_DIR)/util.h
 matrix.o: $(SOURCE_DIR)/matrix.h $(SOURCE_DIR)/matrix.c $(SOURCE_DIR)/vector.h

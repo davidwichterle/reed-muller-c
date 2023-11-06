@@ -90,3 +90,6 @@ _deps
 
 #token
 .token
+
+#Doxygen
+/doc
