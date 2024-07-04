@@ -172,8 +172,10 @@ vector *RM_decode(RM *rm, const char *str) {
 
 int main() {
   RM *rm = RM_new(2, 3);
-  matrix_print(rm->G, "\n");
+  // printf("Generator matrix:\n");
+  // matrix_print(rm->G, "\n");
   vector *v = RM_decode(rm, "00000110");
+  printf("Decoded message:\n");
   vector_print(v, "\n");
   vector_delete(v);
   RM_delete(rm);
